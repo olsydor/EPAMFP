@@ -39,7 +39,7 @@ resource "google_compute_firewall" "power-app-allow-http" {
   network = google_compute_network.power-app-vpc.self_link
   allow {
     protocol = "tcp"
-    ports    = ["8080"]
+    ports    = ["80"]
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["http-server"]
@@ -75,7 +75,7 @@ resource "google_compute_instance" "final-project" {
     apt-get install -y docker.io
     # Pull Docker image
     docker pull olsydor/jenkins-inst:latest
-    docker container run -d -p 8080:8080  -v jenkinsvol:/var/jenkins_home --name jenkins-inst olsydor/jenkins-inst:latest
+    docker container run -d -p 8080:8080  -p50000:50000 -v jenkinsvol:/var/jenkins_home --name jenkins-inst olsydor/jenkins-inst:latest
   EOF
     #-v jenkinsvol:/var/jenkins_home --name jenkins-inst jenkins/jenkins:latest
     #from startup script jenkins/jenkins:lts
@@ -85,12 +85,3 @@ resource "google_compute_instance" "final-project" {
 
   tags = ["http-server", "ssh"]
 }
-/*
-resource "google_compute_global_address" "final_project" {
-  name         = "final-project-global-psconnect-ip"
-  address_type = "EXTERNAL"
-  ip_version   = "IPV4"
-  network      = google_compute_network.power-app-vpc.id
-  address      = "100.100.100.105"
-}
-*/
